@@ -1,0 +1,74 @@
+import random
+
+# define the starting point of the game
+def start_game():
+    print("Welcome to the Football Adventure game!")
+    print("You are a football player trying to make it to the big leagues.")
+
+    # ask the player to choose a position
+    while True:
+        position = input("What position do you want to play? (QB, WR, RB): ").upper()
+        if position in ["QB", "WR", "RB"]:
+            break
+        else:
+            print("Invalid input. Please choose QB, WR, or RB.")
+
+    # start the adventure
+    play_game(position)
+
+# define the main game logic
+def play_game(position):
+    print(f"Great choice! You are now a {position}.")
+
+    # randomly choose the first event
+    event = random.choice(["train", "compete", "rest"])
+
+    # loop through events until player wins or loses
+    while True:
+        print(f"\nYou are currently {event}ing.")
+
+        # ask the player to choose an action
+        action = input("What do you want to do? (train, compete, rest, quit): ").lower()
+
+        if action == "train":
+            # player trains and gets better
+            print("You practice your skills and get better.")
+            event = random.choice(["train", "compete", "rest"])
+
+        elif action == "compete":
+            # player competes and either wins or loses
+            print("You enter a competition and face off against other players.")
+            outcome = random.choice(["win", "lose"])
+
+            if outcome == "win":
+                print("Congratulations! You won the competition.")
+                print("You are getting noticed by scouts.")
+                if position == "QB":
+                    print("A college coach contacts you about playing for their team.")
+                    print("You are on your way to the big leagues!")
+                    break
+                else:
+                    print("A local college coach contacts you about playing for their team.")
+                    event = random.choice(["train", "compete", "rest"])
+
+            elif outcome == "lose":
+                print("Sorry, you lost the competition.")
+                print("You need to train harder to get better.")
+                event = random.choice(["train", "compete", "rest"])
+
+        elif action == "rest":
+            # player rests and recovers
+            print("You take a break to rest and recover.")
+            event = random.choice(["train", "compete", "rest"])
+
+        elif action == "quit":
+            # player quits the game
+            print("Thanks for playing!")
+            break
+
+        else:
+            # invalid input
+            print("Invalid input. Please choose train, compete, rest, or quit.")
+
+# start the game
+start_game()
