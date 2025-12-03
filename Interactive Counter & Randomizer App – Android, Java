@@ -1,0 +1,349 @@
+// File: settings.gradle
+rootProject.name = "MyFirstApp"
+include ':app'
+
+// File: build.gradle (Project-level)
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.0.0"
+        def nav_version = "2.3.0"
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
+    }
+}
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// File: app/build.gradle (Module-level)
+apply plugin: 'com.android.application'
+apply plugin: 'androidx.navigation.safeargs'
+
+android {
+    compileSdkVersion 31
+    defaultConfig {
+        applicationId "com.example.myfirstapp"
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    def nav_version = "2.3.0"
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
+}
+
+// File: app/src/main/AndroidManifest.xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.myfirstapp">
+  <application
+      android:allowBackup="true"
+      android:label="@string/app_name"
+      android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+    <activity
+        android:name=".MainActivity"
+        android:exported="true">
+      <nav-graph android:value="@navigation/nav_graph" />
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>
+
+// File: app/src/main/res/values/colors.xml
+<resources>
+  <color name="colorPrimary">#6200EE</color>
+  <color name="colorPrimaryDark">#3700B3</color>
+  <color name="colorAccent">#03DAC5</color>
+  <color name="screenBackground">#2196F3</color>
+  <color name="buttonBackground">#BBDEFB</color>
+  <color name="screenBackground2">#26C6DA</color>
+</resources>
+
+// File: app/src/main/res/values/strings.xml
+<resources>
+  <string name="app_name">My First App</string>
+  <string name="hello_first_fragment">Hello World!</string>
+  <string name="toast_button_text">Toast</string>
+  <string name="count_button_text">Count</string>
+  <string name="random_button_text">Random</string>
+  <string name="random_heading">Here is a random number between 0 and %d.</string>
+  <string name="previous_button_text">Previous</string>
+  <string name="hello_toast">Hello toast!</string>
+</resources>
+
+// File: app/src/main/res/navigation/nav_graph.xml
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/firstFragment">
+
+  <fragment
+      android:id="@+id/firstFragment"
+      android:name="com.example.myfirstapp.FirstFragment"
+      android:label="First"
+      tools:layout="@layout/fragment_first">
+    <action
+        android:id="@+id/action_FirstFragment_to_SecondFragment"
+        app:destination="@id/secondFragment"/>
+  </fragment>
+
+  <fragment
+      android:id="@+id/secondFragment"
+      android:name="com.example.myfirstapp.SecondFragment"
+      android:label="Second"
+      tools:layout="@layout/fragment_second">
+    <argument
+        android:name="myArg"
+        app:argType="integer"/>
+  </fragment>
+</navigation>
+
+// File: app/src/main/res/layout/activity_main.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"  
+    xmlns:app="http://schemas.android.com/apk/res-auto"  
+    xmlns:tools="http://schemas.android.com/tools"  
+    android:layout_width="match_parent"  
+    android:layout_height="match_parent"  
+    tools:context=".MainActivity">
+
+  <fragment
+      android:id="@+id/nav_host_fragment"
+      android:name="androidx.navigation.fragment.NavHostFragment"
+      app:defaultNavHost="true"
+      app:navGraph="@navigation/nav_graph"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+// File: app/src/main/res/layout/fragment_first.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screenBackground"
+    tools:context=".FirstFragment">
+
+  <TextView
+      android:id="@+id/textview_first"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/hello_first_fragment"
+      android:textSize="72sp"
+      android:textStyle="bold"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintVertical_bias="0.3"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"/>
+
+  <Button
+      android:id="@+id/toast_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/toast_button_text"
+      android:background="@color/buttonBackground"
+      app:layout_constraintTop_toBottomOf="@id/textview_first"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintMarginStart="24dp"/>
+
+  <Button
+      android:id="@+id/count_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/count_button_text"
+      android:background="@color/buttonBackground"
+      app:layout_constraintTop_toBottomOf="@id/textview_first"
+      app:layout_constraintStart_toEndOf="@id/toast_button"
+      app:layout_constraintEnd_toStartOf="@id/random_button"/>
+
+  <Button
+      android:id="@+id/random_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/random_button_text"
+      android:background="@color/buttonBackground"
+      app:layout_constraintTop_toBottomOf="@id/textview_first"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintMarginEnd="24dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+// File: app/src/main/res/layout/fragment_second.xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screenBackground2"
+    tools:context=".SecondFragment">
+
+  <TextView
+      android:id="@+id/textview_header"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="24dp"
+      android:layout_marginEnd="24dp"
+      android:layout_marginTop="24dp"
+      android:text="@string/random_heading"
+      android:textSize="24sp"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"/>
+
+  <TextView
+      android:id="@+id/textview_random"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="0"
+      android:textSize="72sp"
+      android:textStyle="bold"
+      app:layout_constraintTop_toBottomOf="@id/textview_header"
+      app:layout_constraintBottom_toTopOf="@id/button_second"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintVertical_bias="0.45"/>
+
+  <Button
+      android:id="@+id/button_second"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/previous_button_text"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+// File: app/src/main/java/com/example/myfirstapp/MainActivity.java
+package com.example.myfirstapp;
+
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
+import com.example.myfirstapp.databinding.ActivityMainBinding;
+
+public class MainActivity extends AppCompatActivity {
+    private ActivityMainBinding binding;
+    @Override protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        NavHostFragment navHost = (NavHostFragment)
+            getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHost.getNavController();
+        NavigationUI.setupActionBarWithNavController(this, navController);
+    }
+    @Override public boolean onSupportNavigateUp() {
+        NavController navController =
+            ((NavHostFragment) getSupportFragmentManager()
+              .findFragmentById(R.id.nav_host_fragment))
+            .getNavController();
+        return navController.navigateUp() || super.onSupportNavigateUp();
+    }
+}
+
+// File: app/src/main/java/com/example/myfirstapp/FirstFragment.java
+package com.example.myfirstapp;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+import com.example.myfirstapp.databinding.FragmentFirstBinding;
+
+public class FirstFragment extends Fragment {
+    private FragmentFirstBinding binding;
+    @Override public View onCreateView(@NonNull LayoutInflater inflater,
+                                       ViewGroup container,
+                                       Bundle savedInstanceState) {
+        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+    @Override public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        binding.toastButton.setOnClickListener(v ->
+            Toast.makeText(getActivity(), getString(R.string.hello_toast),
+                           Toast.LENGTH_SHORT).show());
+        binding.countButton.setOnClickListener(v -> {
+            int count = Integer.parseInt(binding.textviewFirst.getText().toString()) + 1;
+            binding.textviewFirst.setText(String.valueOf(count));
+        });
+        binding.randomButton.setOnClickListener(v -> {
+            int count = Integer.parseInt(binding.textviewFirst.getText().toString());
+            FirstFragmentDirections.ActionFirstFragmentToSecondFragment action =
+                FirstFragmentDirections
+                  .actionFirstFragmentToSecondFragment(count);
+            NavHostFragment.findNavController(this).navigate(action);
+        });
+    }
+}
+
+// File: app/src/main/java/com/example/myfirstapp/SecondFragment.java
+package com.example.myfirstapp;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.navArgs;
+import com.example.myfirstapp.databinding.FragmentSecondBinding;
+import java.util.Random;
+
+public class SecondFragment extends Fragment {
+    private FragmentSecondBinding binding;
+    private final SecondFragmentArgs args by navArgs<>();
+
+    @Override public View onCreateView(@NonNull LayoutInflater inflater,
+                                       ViewGroup container,
+                                       Bundle savedInstanceState) {
+        binding = FragmentSecondBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+    @Override public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        int count = args.getMyArg();
+        binding.textviewHeader.setText(getString(R.string.random_heading, count));
+        int random = (count > 0) ? new Random().nextInt(count + 1) : 0;
+        binding.textviewRandom.setText(String.valueOf(random));
+        binding.buttonSecond.setOnClickListener(v -> requireActivity().onBackPressed());
+    }
+}
+
+
