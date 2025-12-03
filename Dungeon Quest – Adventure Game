@@ -1,0 +1,38 @@
+# Define the function for each room
+def room1():
+    print("You are in a dark room. There is a door to your left and a door to your right.")
+    choice = input("Which door do you choose? (left/right) ")
+    if choice.lower() == "left":
+        room2()
+    elif choice.lower() == "right":
+        room3()
+    else:
+        print("Invalid choice. Try again.")
+        room1()
+
+def room2():
+    print("You enter a room with a treasure chest in the center. It is locked.")
+    choice = input("Do you want to try to open it? (yes/no) ")
+    if choice.lower() == "yes":
+        print("You find the key in your pocket and open the chest. You win!")
+    elif choice.lower() == "no":
+        print("You turn around and head back to the previous room.")
+        room1()
+    else:
+        print("Invalid choice. Try again.")
+        room2()
+
+def room3():
+    print("You enter a room with a monster in it!")
+    choice = input("Do you want to fight it? (yes/no) ")
+    if choice.lower() == "yes":
+        print("You attack the monster and defeat it! You win!")
+    elif choice.lower() == "no":
+        print("You run back to the previous room.")
+        room1()
+    else:
+        print("Invalid choice. Try again.")
+        room3()
+
+# Start the game in the first room
+room1()
