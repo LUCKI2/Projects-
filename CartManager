@@ -1,0 +1,280 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// ================================
+// ItemToPurchase Class Definition
+// ================================
+class ItemToPurchase {
+public:
+    // Default constructor
+    ItemToPurchase() {
+        itemName = "none";
+        itemDescription = "none";
+        itemPrice = 0;
+        itemQuantity = 0;
+    }
+
+    // Parameterized constructor with default values for price and quantity
+    ItemToPurchase(string itemName, string itemDescription = "none", int itemPrice = 0, int itemQuantity = 0) {
+        this->itemName = itemName;
+        this->itemDescription = itemDescription;
+        this->itemPrice = itemPrice;
+        this->itemQuantity = itemQuantity;
+    }
+
+    // Accessors
+    string GetName() const { return itemName; }
+    string GetDescription() const { return itemDescription; }
+    int GetPrice() const { return itemPrice; }
+    int GetQuantity() const { return itemQuantity; }
+
+    // Mutators
+    void SetName(string name) { itemName = name; }
+    void SetDescription(string description) { itemDescription = description; }
+    void SetPrice(int price) { itemPrice = price; }
+    void SetQuantity(int quantity) { itemQuantity = quantity; }
+
+    // Outputs item cost in the format: <name> <quantity> @ $<price> = $<subtotal>
+    void PrintItemCost() const {
+        cout << itemName << " " << itemQuantity << " @ $" << itemPrice
+             << " = $" << (itemPrice * itemQuantity) << endl;
+    }
+
+    // Outputs item description in the format: <name>: <description>
+    void PrintItemDescription() const {
+        cout << itemName << ": " << itemDescription << endl;
+    }
+
+private:
+    string itemName;
+    string itemDescription;  // Initialized to "none" in default constructor
+    int itemPrice;
+    int itemQuantity;
+};
+
+// ================================
+// ShoppingCart Class Definition
+// ================================
+class ShoppingCart {
+public:
+    // Default constructor
+    ShoppingCart() {
+        customerName = "none";
+        currentDate = "January 1, 2016";
+    }
+
+    // Parameterized constructor taking customer's name and date
+    ShoppingCart(string customerName, string currentDate) {
+        this->customerName = customerName;
+        this->currentDate = currentDate;
+    }
+
+    // Accessors
+    string GetCustomerName() const { return customerName; }
+    string GetDate() const { return currentDate; }
+
+    // Adds an item to the cartItems vector
+    void AddItem(const ItemToPurchase &item) {
+        cartItems.push_back(item);
+    }
+
+    // Removes an item (by name) from the cartItems vector.
+    // If the item is not found, outputs an appropriate message.
+    void RemoveItem(string itemName) {
+        bool found = false;
+        for (auto it = cartItems.begin(); it != cartItems.end(); it++) {
+            if (it->GetName() == itemName) {
+                cartItems.erase(it);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            cout << "Item not found in cart. Nothing removed." << endl;
+        }
+    }
+
+    // Modifies an existing item in the cart.
+    // Only non-default (non-"none", non-zero) values will be updated.
+    // If the item is not found, outputs an appropriate message.
+    void ModifyItem(const ItemToPurchase &item) {
+        bool found = false;
+        for (size_t i = 0; i < cartItems.size(); i++) {
+            if (cartItems[i].GetName() == item.GetName()) {
+                found = true;
+                if (item.GetDescription() != "none") {
+                    cartItems[i].SetDescription(item.GetDescription());
+                }
+                if (item.GetPrice() != 0) {
+                    cartItems[i].SetPrice(item.GetPrice());
+                }
+                if (item.GetQuantity() != 0) {
+                    cartItems[i].SetQuantity(item.GetQuantity());
+                }
+                break;
+            }
+        }
+        if (!found) {
+            cout << "Item not found in cart. Nothing modified." << endl;
+        }
+    }
+
+    // Returns the total number of items in the cart (sum of quantities)
+    int GetNumItemsInCart() const {
+        int totalQuantity = 0;
+        for (size_t i = 0; i < cartItems.size(); i++) {
+            totalQuantity += cartItems[i].GetQuantity();
+        }
+        return totalQuantity;
+    }
+
+    // Returns the total cost of all items in the cart
+    int GetCostOfCart() const {
+        int totalCost = 0;
+        for (size_t i = 0; i < cartItems.size(); i++) {
+            totalCost += cartItems[i].GetPrice() * cartItems[i].GetQuantity();
+        }
+        return totalCost;
+    }
+
+    // Outputs the shopping cart's total, including each item's cost.
+    // If the cart is empty, outputs "SHOPPING CART IS EMPTY"
+    void PrintTotal() const {
+        cout << GetCustomerName() << "'s Shopping Cart - " << GetDate() << endl;
+        cout << "Number of Items: " << GetNumItemsInCart() << endl << endl;
+        if (cartItems.empty()) {
+            cout << "SHOPPING CART IS EMPTY" << endl;
+        } else {
+            for (size_t i = 0; i < cartItems.size(); i++) {
+                cartItems[i].PrintItemCost();
+            }
+        }
+        cout << "\nTotal: $" << GetCostOfCart() << endl;
+    }
+
+    // Outputs each item's description.
+    // If the cart is empty, outputs "SHOPPING CART IS EMPTY"
+    void PrintDescriptions() const {
+        cout << GetCustomerName() << "'s Shopping Cart - " << GetDate() << endl << endl;
+        cout << "Item Descriptions" << endl;
+        if (cartItems.empty()) {
+            cout << "SHOPPING CART IS EMPTY" << endl;
+        } else {
+            for (size_t i = 0; i < cartItems.size(); i++) {
+                cartItems[i].PrintItemDescription();
+            }
+        }
+    }
+
+private:
+    string customerName;
+    string currentDate;
+    vector<ItemToPurchase> cartItems;
+};
+
+// ================================
+// Menu Functions
+// ================================
+void PrintMenu() {
+    cout << "\nMENU" << endl;
+    cout << "a - Add item to cart" << endl;
+    cout << "d - Remove item from cart" << endl;
+    cout << "c - Change item quantity" << endl;
+    cout << "i - Output items' descriptions" << endl;
+    cout << "o - Output shopping cart" << endl;
+    cout << "q - Quit" << endl;
+}
+
+void ExecuteMenu(char option, ShoppingCart &cart) {
+    string itemName, itemDescription;
+    int itemPrice, itemQuantity;
+    ItemToPurchase tempItem;
+    
+    switch (option) {
+        case 'a': // Add item to cart
+            cout << "\nADD ITEM TO CART" << endl;
+            cout << "Enter the item name:" << endl;
+            getline(cin, itemName);
+            cout << "Enter the item description:" << endl;
+            getline(cin, itemDescription);
+            cout << "Enter the item price:" << endl;
+            cin >> itemPrice;
+            cout << "Enter the item quantity:" << endl;
+            cin >> itemQuantity;
+            cin.ignore(); // clear newline
+            tempItem = ItemToPurchase(itemName, itemDescription, itemPrice, itemQuantity);
+            cart.AddItem(tempItem);
+            break;
+        case 'd': // Remove item from cart
+            cout << "\nREMOVE ITEM FROM CART" << endl;
+            cout << "Enter name of item to remove:" << endl;
+            getline(cin, itemName);
+            cart.RemoveItem(itemName);
+            break;
+        case 'c': // Change item quantity
+            cout << "\nCHANGE ITEM QUANTITY" << endl;
+            cout << "Enter the item name:" << endl;
+            getline(cin, itemName);
+            cout << "Enter the new quantity:" << endl;
+            cin >> itemQuantity;
+            cin.ignore();
+            // Create a temporary ItemToPurchase with only the name and new quantity
+            tempItem = ItemToPurchase(itemName, "none", 0, itemQuantity);
+            cart.ModifyItem(tempItem);
+            break;
+        case 'i': // Output items' descriptions
+            cout << "\nOUTPUT ITEMS' DESCRIPTIONS" << endl;
+            cart.PrintDescriptions();
+            break;
+        case 'o': // Output shopping cart
+            cout << "\nOUTPUT SHOPPING CART" << endl;
+            cart.PrintTotal();
+            break;
+        default:
+            break;
+    }
+}
+
+// ================================
+// Main Function
+// ================================
+int main() {
+    string customerName, currentDate;
+    char option;
+    
+    // Prompt for customer's name and today's date
+    cout << "Enter customer's name:" << endl;
+    getline(cin, customerName);
+    cout << "Enter today's date:" << endl;
+    getline(cin, currentDate);
+    cout << "\nCustomer name: " << customerName << endl;
+    cout << "Today's date: " << currentDate << endl;
+    
+    // Create a ShoppingCart object with the provided name and date.
+    ShoppingCart cart(customerName, currentDate);
+    
+    // Menu loop: display the menu and execute the chosen option until 'q' is entered.
+    do {
+        PrintMenu();
+        cout << "\nChoose an option:" << endl;
+        cin >> option;
+        cin.ignore();  // clear the newline
+        
+        // Validate the option
+        while (option != 'a' && option != 'd' && option != 'c' &&
+               option != 'i' && option != 'o' && option != 'q') {
+            cout << "Invalid option. Choose again:" << endl;
+            cin >> option;
+            cin.ignore();
+        }
+        if (option != 'q') {
+            ExecuteMenu(option, cart);
+        }
+    } while (option != 'q');
+    
+    return 0;
+}
+
+
